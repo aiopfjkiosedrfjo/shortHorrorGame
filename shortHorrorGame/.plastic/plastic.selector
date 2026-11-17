@@ -1,0 +1,4 @@
+repository "shortHorrorGame/shortHorrorGame@17867213627454@cloud"
+  path "/"
+    br "/main"
+    co "/main"
