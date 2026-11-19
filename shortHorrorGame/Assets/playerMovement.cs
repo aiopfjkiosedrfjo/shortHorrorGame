@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,9 +10,10 @@ public class Player : MonoBehaviour
 
     // Ground Movement
     public Rigidbody rb;
-    [SerializeField] private float constantMoveSpeed = 8f;
+    [SerializeField] private float sprintingMoveSpeed = 8f;
     [SerializeField] private float crouchingMoveSpeed = 5f;
     [SerializeField]private float MoveSpeed = 5f;
+    private bool isSprinting;
     private float moveHorizontal;
     private float moveForward;
     [SerializeField] private float sphereRadiusGroundCheck;
@@ -57,6 +59,7 @@ public class Player : MonoBehaviour
     {
         moveHorizontal = Input.GetAxisRaw("Horizontal");
         moveForward = Input.GetAxisRaw("Vertical");
+        isSprinting = Input.GetKey(KeyCode.LeftShift);
     }
 
 
@@ -119,9 +122,17 @@ public class Player : MonoBehaviour
     void MovePlayer()
     {
         Vector3 movementDirection = (orientation.forward * moveForward + orientation.right * moveHorizontal).normalized;
-        Vector3 targetVelocity = movementDirection * MoveSpeed;
+        Vector3 targetVelocity = movementDirection.normalized * MoveSpeed;
+        if (isSprinting)
+        {
+            targetVelocity = movementDirection.normalized * sprintingMoveSpeed;
+        }
+        else
+        {
+            targetVelocity = movementDirection.normalized * MoveSpeed;
+        }
 
-        rb.AddForce(movementDirection.normalized * MoveSpeed * 10f, ForceMode.Acceleration);
+        rb.AddForce(targetVelocity * 10f, ForceMode.Acceleration);
         float currentVelocity = rb.linearVelocity.magnitude;
     }
 
